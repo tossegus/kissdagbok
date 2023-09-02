@@ -23,7 +23,7 @@ class PEE_OR_POO(Enum):
 
 class HIT_OR_MISS(Enum):
   HIT  = 11088 #"TRÄFF" This number is a star
-  MISS = 127783 #"MISS" This number is a raincloud
+  MISS = 10060 #"MISS" This number is a red crosred cross
 
 @contextmanager
 def connect_to_db(write = False):
@@ -119,11 +119,11 @@ def mainpage():
     Accessible via menu bar.
     """
     records = []
+    db = {}
     with connect_to_db(write=False) as cursor:
       query = "SELECT * FROM records"
       result = cursor.execute(query)
       entries = result.fetchall()
-      db = {}
       for res in entries:
         (day,time_stamp)  = res[0].split(' ')
         entry = (time_stamp, res[1], res[2])
@@ -132,7 +132,7 @@ def mainpage():
         else:
           db[day].append(entry)
       
-    return render_template("base.html", entries=db)
+    return render_template("main.html", entries=db)
 
 
 import os
