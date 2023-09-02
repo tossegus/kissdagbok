@@ -32,7 +32,7 @@ def connect_to_db(write = False):
     """
     # Connect to database
     try:
-        sqliteConnection = sqlite3.connect('kissochbajs.db')
+        sqliteConnection = sqlite3.connect(db_path)
         cursor = sqliteConnection.cursor()
         yield cursor
     except Exception as e:
@@ -120,6 +120,17 @@ def mainpage():
     """
     records = []
     db = {}
+    if not os.path.exists(db_path):
+        print("Could not find db. Populating new one")
+        with connect_to_db(write=True) as cursor:
+          # Create records table
+          sql_create_records_table = """ CREATE TABLE IF NOT EXISTS records (
+                                         time text PRIMARY KEY,
+                                         pop_type text NOT NULL,
+                                         hom_result text NOT NULL
+                                     ); """
+          cursor.execute(sql_create_records_table)
+
     with connect_to_db(write=False) as cursor:
       query = "SELECT * FROM records"
       result = cursor.execute(query)
@@ -136,23 +147,14 @@ def mainpage():
 
 
 import os
+db_path = '/var/lib/kissbajs/kissdagbok/kissochbajs.db'
 
 def main(ip="0.0.0.0"):
     """Start the application. Entry point for the flask application"""
     # Load or create database
-    if not os.path.exists("kissochbajs.db"):
-        print("Could not find db. Populating new one")
-        with connect_to_db(write=True) as cursor:
-          # Create records table
-          sql_create_records_table = """ CREATE TABLE IF NOT EXISTS records (
-                                         time text PRIMARY KEY,
-                                         pop_type text NOT NULL,
-                                         hom_result text NOT NULL
-                                     ); """
-          cursor.execute(sql_create_records_table)
-
+    
     # Start application
-    app.run(debug=False, host=ip)
+    app.run(debug=False, host=ip, port=5000)
 
 
 if __name__ == "__main__":

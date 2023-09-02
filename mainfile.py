@@ -19,5 +19,5 @@ def print_help():
 if __name__ == "__main__":
     ip = "0.0.0.0"
     if len(sys.argv) > 1:
-      ip = sys.argv[2]
+      ip = sys.argv[1]
     flask_app.main(ip=ip)
