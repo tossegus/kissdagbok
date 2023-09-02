@@ -8,57 +8,90 @@ import os
 import re
 from copy import deepcopy
 from flask import Flask, render_template, request
-from datawrapper import DataWrapper
-from recipe import Recipe
-from shoppinglist import ShoppingList
-from helper import convert_str_to_float, RecipeFile
-from cooklang import parseRecipe
+from enum import Enum
 
-shopping_list = []
 app = Flask(__name__)
 
+class PEE_OR_POO(Enum):
+    PEE = 1
+    POO = 2
 
-enum POP = [ PEE, POO ]
-enum HIT_OR_MISS = [ HIT, MISS ]
+class HIT_OR_MISS(Enum):
+  HIT = 1
+  MISS = 2
 
 # change this to add to database
-def add_to_shoppinglist(pee_or_poo = false, hit_or_miss=MISS):
+def add_to_shoppinglist(pee_or_poo = False, hit_or_miss=False):
     """Add chosen recipe to the shopping list"""
     if not pee_or_poo:
       print("You need to specify if it was a pee or poo")
-    else
-      if pee_or_poo == PEE:
-        if hit_or_miss == HIT:
+    else:
+      if pee_or_poo == PEE_OR_POO.PEE:
+        if hit_or_miss == HIT_OR_MISS.HIT:
           # Add PEE + HIT to SQL database
+          print("PEE HIT")
         else:
           # Add PEE + MISS to SQL database
-      else
-        if hit_or_miss == HIT:
+          print("PEE MISS")
+      else:
+        if hit_or_miss == HIT_OR_MISS.HIT:
           # Add POO + HIT to SQL database
+          print("POO HIT")
         else:
           # Add POO + MISS to SQL database
+          print("POO MISS")
+
+@app.route("/kiss/")
+def add_kiss():
+  print("KISS")
+  return render_template("kiss.html")
+
+@app.route("/kiss_hit/")
+def add_kiss_hit():
+  print("KISS HIT")
+  # Add to database
+  return render_template("base.html")
+
+@app.route("/kiss_miss/")
+def add_kiss_miss():
+  print("KISS MISS")
+  return render_template("base.html")
+
+
+@app.route("/bajs/")
+def add_bajs():
+  print("BAJS")
+  return render_template("bajs.html")
+
+@app.route("/bajs_hit/")
+def add_bajs_hit():
+  print("BAJS HIT")
+  # Add to database
+  return render_template("base.html")
+
+@app.route("/bajs_miss/")
+def add_bajs_miss():
+  print("BAJS MISS")
+  return render_template("base.html")
 
 @app.route("/")
 def home():
-    """Home page. Redirects to recipes page"""
-    return recipes()
+  """Home page. Redirects to recipes page"""
+  return mainpage()
 
+record = {}
 
-@app.route("/recipes/")
-def recipes():
+@app.route("/base/")
+def mainpage():
     """
     Show the recipes page. A lot of data mangling happens here.
     Accessible via menu bar.
     """
-    server_item = DataWrapper(os.getcwd())
-    recipe_tree = server_item.recipe_tree.tree
-    int_tree = deepcopy(recipe_tree)
-    for item in int_tree:
-        tree_list = []
-        for elem in int_tree[item]:
-            tree_list.append(RecipeFile(elem.file.replace(".cook", ""), elem.path))
-        int_tree[item] = tree_list
-    return render_template("recipes.html", recipe_tree=int_tree)
+    # Connect to database
+    # Make sure to render add event with a link to next page with KISS/BAJS
+    # Add that to a global dictionary with {pee/poo: hit/miss} that should be added to the database with a timestamp
+    # On next page add TRÄFF eller MISS
+    return render_template("base.html")
 
 
 @app.route("/shoppinglist/", methods=["POST", "GET"])
@@ -162,7 +195,7 @@ def recipe():
 def main(ip="0.0.0.0"):
     """Start the application. Entry point for the flask application"""
     # Start application
-    app.run(ssl_context=("cert.pem", "key.pem"), debug=False, host=ip)
+    app.run(debug=False, host=ip)
 
 
 if __name__ == "__main__":
