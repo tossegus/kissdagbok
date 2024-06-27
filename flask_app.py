@@ -1,8 +1,10 @@
 """
 Flask application
 
-The main page just re-directs to /recipes since that is
-the most relevant page anyway. And who wants a 'Welcome here' page anyway?
+The main page just re-directs to / since that is
+the most relevant page anyway.
+
+And who wants a 'Welcome here' page anyway?
 """
 import os
 import re
@@ -22,8 +24,9 @@ class PEE_OR_POO(Enum):
     POO = 128169 #"BAJS"
 
 class HIT_OR_MISS(Enum):
-  HIT  = 11088 #"TRÄFF" This number is a star
-  MISS = 10060 #"MISS" This number is a red crosred cross
+  HIT           = 11088 #"TRÄFF" This number is a star
+  MISS          = 10060 #"MISS" This number is a red cross
+  MIXED_SUCCESS = 127906 #"OSÄKERT" This is a roller coaster
 
 @contextmanager
 def connect_to_db(write = False):
@@ -90,6 +93,12 @@ def add_kiss_miss():
   return goto_mainpage()
 
 
+@app.route("/kiss_mix/")
+def add_kiss_mixed_success():
+    add_to_db(PEE_OR_POO.PEE, HIT_OR_MISS.MIXED_SUCCESS)
+    return goto_mainpage()
+
+
 @app.route("/bajs/")
 def add_bajs():
   return render_template("bajs.html")
@@ -107,15 +116,21 @@ def add_bajs_miss():
   return goto_mainpage()
 
 
+@app.route("/bajs_mix/")
+def add_bajs_mixed_success():
+    add_to_db(PEE_OR_POO.POO, HIT_OR_MISS.MIXED_SUCCESS)
+    return goto_mainpage()
+
+
 @app.route("/")
 def home():
-  """Home page. Redirects to recipes page"""
+  """Home page. Redirects to start screen"""
   return mainpage()
 
 @app.route("/base/")
 def mainpage():
     """
-    Show the recipes page. A lot of data mangling happens here.
+    Show the main page. A lot of data mangling happens here.
     Accessible via menu bar.
     """
     records = []
