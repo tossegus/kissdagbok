@@ -12,6 +12,7 @@ from copy import deepcopy
 from flask import Flask, render_template, redirect, url_for
 from enum import Enum
 from datetime import datetime
+from math import ceil
 
 from contextlib import contextmanager
 
@@ -25,9 +26,9 @@ class PEE_POO_CLOCKED(Enum):
     CLOCKED = 128337 #"RUTIN"
 
 class HIT_OR_MISS(Enum):
-  HIT           = 11088  #"TRÄFF" This number is a star
-  MISS          = 10060  #"MISS" This number is a red cross
-  MIXED_SUCCESS = 127906 #"OSÄKERT" This is a roller coaster
+    HIT           = 11088  #"TRÄFF" This number is a star
+    MISS          = 10060  #"MISS" This number is a red cross
+    MIXED_SUCCESS = 127906 #"OSÄKERT" This is a roller coaster
 
 @contextmanager
 def connect_to_db(write = False):
@@ -123,6 +124,7 @@ def add_bajs_mixed_success():
     add_to_db(PEE_POO_CLOCKED.POO, HIT_OR_MISS.MIXED_SUCCESS)
     return goto_mainpage()
 
+
 @app.route("/rutin/")
 def add_rutin():
   return render_template("rutin.html")
@@ -175,7 +177,24 @@ def mainpage():
           db[day] = [entry]
         else:
           db[day].append(entry)
-      
+
+    for key, value in db.items():
+        hits = 0
+        entries = len(value)
+        for (date, pee_or_poo, hit_or_miss) in value:
+            if int(hit_or_miss) == HIT_OR_MISS.HIT.value:
+                # All hits count. This doesn't inclue mixed successes since
+                # they leave room for improvement.
+                hits += 1
+            elif int(pee_or_poo) == PEE_POO_CLOCKED.CLOCKED.value:
+               # Special calculations for clocked (rutin) events.
+               # If it is a hit, we count it as a hit in the previous if-statement.
+               # If it is a miss, we don't the entry since we started it, but it failed.
+               entries -= 1
+        percent_hits = ceil(100*hits/entries)
+        db[key] = (value, percent_hits, entries)
+
+    # db is: ([entries], % hits, number of entries for day)
     return render_template("main.html", entries=db)
 
 
