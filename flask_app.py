@@ -19,13 +19,14 @@ import sqlite3
 
 app = Flask(__name__)
 
-class PEE_OR_POO(Enum):
-    PEE = 128166 #"KISS"
-    POO = 128169 #"BAJS"
+class PEE_POO_CLOCKED(Enum):
+    PEE     = 128166 #"KISS"
+    POO     = 128169 #"BAJS"
+    CLOCKED = 128337 #"RUTIN"
 
 class HIT_OR_MISS(Enum):
-  HIT           = 11088 #"TRÄFF" This number is a star
-  MISS          = 10060 #"MISS" This number is a red cross
+  HIT           = 11088  #"TRÄFF" This number is a star
+  MISS          = 10060  #"MISS" This number is a red cross
   MIXED_SUCCESS = 127906 #"OSÄKERT" This is a roller coaster
 
 @contextmanager
@@ -81,21 +82,22 @@ def add_kiss():
   return render_template("kiss.html")
 
 
+
 @app.route("/kiss_hit/")
 def add_kiss_hit():
-  add_to_db(PEE_OR_POO.PEE, HIT_OR_MISS.HIT)
+  add_to_db(PEE_POO_CLOCKED.PEE, HIT_OR_MISS.HIT)
   return goto_mainpage()
 
 
 @app.route("/kiss_miss/")
 def add_kiss_miss():
-  add_to_db(PEE_OR_POO.PEE, HIT_OR_MISS.MISS)
+  add_to_db(PEE_POO_CLOCKED.PEE, HIT_OR_MISS.MISS)
   return goto_mainpage()
 
 
 @app.route("/kiss_mix/")
 def add_kiss_mixed_success():
-    add_to_db(PEE_OR_POO.PEE, HIT_OR_MISS.MIXED_SUCCESS)
+    add_to_db(PEE_POO_CLOCKED.PEE, HIT_OR_MISS.MIXED_SUCCESS)
     return goto_mainpage()
 
 
@@ -106,19 +108,35 @@ def add_bajs():
 
 @app.route("/bajs_hit/")
 def add_bajs_hit():
-  add_to_db(PEE_OR_POO.POO, HIT_OR_MISS.HIT)
+  add_to_db(PEE_POO_CLOCKED.POO, HIT_OR_MISS.HIT)
   return goto_mainpage()
 
 
 @app.route("/bajs_miss/")
 def add_bajs_miss():
-  add_to_db(PEE_OR_POO.POO, HIT_OR_MISS.MISS)
+  add_to_db(PEE_POO_CLOCKED.POO, HIT_OR_MISS.MISS)
   return goto_mainpage()
 
 
 @app.route("/bajs_mix/")
 def add_bajs_mixed_success():
-    add_to_db(PEE_OR_POO.POO, HIT_OR_MISS.MIXED_SUCCESS)
+    add_to_db(PEE_POO_CLOCKED.POO, HIT_OR_MISS.MIXED_SUCCESS)
+    return goto_mainpage()
+
+@app.route("/rutin/")
+def add_rutin():
+  return render_template("rutin.html")
+
+
+@app.route("/rutin_hit/")
+def add_rutin_hit():
+    add_to_db(PEE_POO_CLOCKED.CLOCKED, HIT_OR_MISS.HIT)
+    return goto_mainpage()
+
+
+@app.route("/rutin_miss/")
+def add_rutin_miss():
+    add_to_db(PEE_POO_CLOCKED.CLOCKED, HIT_OR_MISS.MISS)
     return goto_mainpage()
 
 

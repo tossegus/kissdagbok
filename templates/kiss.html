@@ -1,11 +1,24 @@
 {% extends 'base.html' %}
 
+{% block header_content %}
+<div class="menu-wrapper">
+    <nav style="display: flex;">
+	<div class="menu-option">
+	    <a href="/base">Tillbaka</a>
+	</div>
+	<div class="menu-option">
+	    <a href="/bajs">Bajs</a>
+	</div>
+	<div class="menu-option">
+	    <a href="/rutin">Rutin</a>
+	</div>
+    </nav>
+</div>
+{% endblock %}
+
 {% block content %}
 <h1>Kiss</h1>
-<div>
 <a class="btn btn-primary" href="/kiss_hit">Träff</a>
 <a class="btn btn-primary" href="/kiss_miss">Miss</a>
 <a class="btn btn-primary" href="/kiss_mix">Både och</a>
-<a class="btn btn-primary" href="/base">Backa</a>
-</div>
 {% endblock %}

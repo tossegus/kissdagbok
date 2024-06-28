@@ -67,17 +67,11 @@
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </head>
 <body>
-    <header>
-        <div class="menu-wrapper">
-            <nav style="display: flex;">
-                <div class="menu-option">
-                    <a href="/kiss">Kiss</a>
-                </div>
-                <div class="menu-option">
-                    <a href="/bajs">Bajs</a>
-                </div>
-            </nav>
-        </div>
+
+    <header class="header_content">
+    {% block header_content %}
+    <!-- header_content content -->
+    {% endblock %}
     </header>
 
     <main class="content">
